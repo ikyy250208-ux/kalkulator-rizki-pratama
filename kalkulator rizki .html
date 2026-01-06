@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator 1-100</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .calculator {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .display {
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 2.5em;
+            min-height: 80px;
+            overflow: hidden;
+            word-break: break-all;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .error {
+            color: #ff6b6b;
+        }
+        
+        .result {
+            color: #4cd964;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(2px) scale(0.98);
+            transition: transform 0.05s;
+        }
+        
+        .operator {
+            background: rgba(255, 149, 0, 0.9);
+            color: white;
+        }
+        
+        .operator:hover {
+            background: rgba(255, 149, 0, 1);
+        }
+        
+        .equals {
+            background: rgba(52, 199, 89, 0.9);
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .equals:hover {
+            background: rgba(52, 199, 89, 1);
+        }
+        
+        .clear {
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+        }
+        
+        .clear:hover {
+            background: rgba(255, 59, 48, 1);
+        }
+        
+        .number-btn {
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        @keyframes buttonPress {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            50% {
+                transform: scale(0.95);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+        }
+        
+        .button-press {
+            animation: buttonPress 0.15s ease;
+        }
+        
+        .range-info {
+            text-align: center;
+            color: white;
+            margin-top: 15px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: white;
+            font-size: 0.9em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .instructions ul {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="result" id="result"></div>
+        
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="backspace()">⌫</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            
+            <button class="number-btn" onclick="appendToDisplay('7')">7</button>
+            <button class="number-btn" onclick="appendToDisplay('8')">8</button>
+            <button class="number-btn" onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button class="number-btn" onclick="appendToDisplay('4')">4</button>
+            <button class="number-btn" onclick="appendToDisplay('5')">5</button>
+            <button class="number-btn" onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button class="number-btn" onclick="appendToDisplay('1')">1</button>
+            <button class="number-btn" onclick="appendToDisplay('2')">2</button>
+            <button class="number-btn" onclick="appendToDisplay('3')">3</button>
+            <button class="number-btn" onclick="appendToDisplay('0')">0</button>
+            
+            <button class="number-btn" onclick="appendToDisplay('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+        
+        <div class="range-info">
+            ⚠️ Kalkulator ini dapat menghitung angka dari 1 hingga 100 dengan akurat
+        </div>
+        
+        <div class="instructions">
+            <h3>Cara Penggunaan:</h3>
+            <ul>
+                <li>Tekan angka 1-100 untuk memasukkan angka</li>
+                <li>Gunakan operator +, -, ×, ÷ untuk operasi</li>
+                <li>Hasil akan ditampilkan dengan warna hijau</li>
+                <li>Tekan C untuk menghapus semua</li>
+                <li>Tekan ⌫ untuk menghapus karakter terakhir</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let resultDisplay = document.getElementById('result');
+        let currentInput = '0';
+        let lastResult = null;
+        
+        function appendToDisplay(value) {
+            const button = event.target;
+            button.classList.add('button-press');
+            setTimeout(() => {
+                button.classList.remove('button-press');
+            }, 150);
+            
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            
+            display.textContent = currentInput;
+            
+            // Validasi angka 1-100
+            validateInput();
+        }
+        
+        function clearDisplay() {
+            const button = event.target;
+            button.classList.add('button-press');
+            setTimeout(() => {
+                button.classList.remove('button-press');
+            }, 150);
+            
+            currentInput = '0';
+            display.textContent = currentInput;
+            resultDisplay.textContent = '';
+            display.classList.remove('error');
+        }
+        
+        function backspace() {
+            const button = event.target;
+            button.classList.add('button-press');
+            setTimeout(() => {
+                button.classList.remove('button-press');
+            }, 150);
+            
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            display.textContent = currentInput;
+            validateInput();
+        }
+        
+        function validateInput() {
+            const expression = currentInput;
+            const numbers = expression.split(/[\+\-\*\/]/);
+            
+            for (let num of numbers) {
+                if (num !== '') {
+                    const number = parseFloat(num);
+                    if (isNaN(number)) continue;
+                    
+                    if (number < 1 || number > 100) {
+                        display.classList.add('error');
+                        resultDisplay.textContent = 'Error: Angka harus antara 1-100';
+                        resultDisplay.style.color = '#ff6b6b';
+                        return false;
+                    }
+                }
+            }
+            
+            display.classList.remove('error');
+            resultDisplay.textContent = '';
+            return true;
+        }
+        
+        function calculate() {
+            const button = event.target;
+            button.classList.add('button-press');
+            setTimeout(() => {
+                button.classList.remove('button-press');
+            }, 150);
+            
+            if (!validateInput()) {
+                return;
+            }
+            
+            try {
+                let expression = currentInput.replace(/×/g, '*').replace(/÷/g, '/');
+                
+                // Validasi ekspresi matematika
+                if (!/^[0-9+\-*/().\s]+$/.test(expression)) {
+                    throw new Error('Ekspresi tidak valid');
+                }
+                
+                // Hitung menggunakan eval (dalam konteks terbatas ini aman)
+                let result = eval(expression);
+                
+                // Bulatkan hasil jika perlu
+                result = Math.round(result * 1000000) / 1000000;
+                
+                // Validasi hasil akhir
+                if (result < 1 || result > 100) {
+                    display.classList.add('error');
+                    resultDisplay.textContent = 'Error: Hasil harus antara 1-100';
+                    resultDisplay.style.color = '#ff6b6b';
+                    return;
+                }
+                
+                resultDisplay.textContent = `= ${result}`;
+                resultDisplay.style.color = '#4cd964';
+                lastResult = result;
+                
+            } catch (error) {
+                display.classList.add('error');
+                resultDisplay.textContent = 'Error: Perhitungan tidak valid';
+                resultDisplay.style.color = '#ff6b6b';
+            }
+        }
+        
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9') {
+                appendToDisplay(key);
+            } else if (key === '.') {
+                appendToDisplay('.');
+            } else if (key === '+') {
+                appendToDisplay('+');
+            } else if (key === '-') {
+                appendToDisplay('-');
+            } else if (key === '*') {
+                appendToDisplay('*');
+            } else if (key === '/') {
+                event.preventDefault();
+                appendToDisplay('/');
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault();
+                calculate();
+            } else if (key === 'Escape' || key === 'Delete') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                backspace();
+            }
+        });
+        
+        // Validasi awal
+        validateInput();
+    </script>
+</body>
+</html>
